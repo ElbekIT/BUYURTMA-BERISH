@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     const profileLink = body.profileLink as string
     const platform = body.platform as Platform
     const designType = body.designType as string
+    const deadline = body.deadline as string
     const gameTitle = body.gameTitle as string
     const previewName = body.previewName as string
     const additionalNotes = body.additionalNotes as string
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
     const userName = body.userName as string
 
     // Validate required fields
-    if (!fullName || !telegramUsername || !platformName || !platform || !designType) {
+    if (!fullName || !telegramUsername || !platformName || !platform || !designType || !deadline) {
       return NextResponse.json(
         { message: 'Majburiy maydonlar to\'ldirilmagan' },
         { status: 400 }
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
       platformName,
       profileLink: profileLink || undefined,
       designType,
+      deadline,
       gameTitle: gameTitle || undefined,
       previewName: previewName || undefined,
       additionalNotes: additionalNotes || undefined,

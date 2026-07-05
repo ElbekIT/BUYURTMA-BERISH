@@ -10,8 +10,9 @@ import {
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyATIFGP4ImY-OH_QP34jGa7iwpbgoscgh8",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyATIFGP4ImY-OH_QP34jGa7iwpbgoscgh8",
   authDomain: "buyurtma-berish-uchun.firebaseapp.com",
   databaseURL: "https://buyurtma-berish-uchun-default-rtdb.firebaseio.com",
   projectId: "buyurtma-berish-uchun",
@@ -19,7 +20,7 @@ const firebaseConfig = {
   messagingSenderId: "327644162272",
   appId: "1:327644162272:web:57100e6c4b1c0141e0c885",
   measurementId: "G-S0PJ9D138B"
-};
+}
 
 // Validate configuration
 const isConfigured = Object.values(firebaseConfig).every(val => val && val !== 'undefined')

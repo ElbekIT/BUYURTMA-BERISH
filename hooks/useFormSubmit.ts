@@ -29,6 +29,7 @@ export const useFormSubmit = (): UseFormSubmitReturn => {
         profileLink: data.profileLink || '',
         platform: data.platform,
         designType: data.designType,
+        deadline: data.deadline,
         gameTitle: data.gameTitle || '',
         previewName: data.previewName || '',
         additionalNotes: data.additionalNotes || '',

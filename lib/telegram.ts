@@ -3,9 +3,9 @@ import FormData from 'form-data'
 import { FormSubmission } from './types'
 import { formatDeadline } from './utils'
 
-const BOT_TOKEN = "8848708593:AAExdpagsAufF5S5DZFEIjKefbkmC3UWgyc";
-const CHAT_ID = "8269163077";
-const TELEGRAM_API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
+const BOT_TOKEN = process.env.BOT_TOKEN || ''
+const CHAT_ID = process.env.CHAT_ID || ''
+const TELEGRAM_API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`
 
 export const sendTelegramMessage = async (
   message: string
