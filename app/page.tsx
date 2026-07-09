@@ -98,12 +98,12 @@ export default function Page() {
   ]
 
   const whyChooseMe = [
-    { text: 'Dizaynga 8.9+ yillik tajriba', icon: '⭐' },
-    { text: 'Tez va ishonchli xizmat', icon: '⚡' },
-    { text: '100% reviziyada tayyor', icon: '✅' },
-    { text: 'Zamonaviy dizayn stillar', icon: '🎨' },
-    { text: 'Professional va yaratuvchi', icon: '🎭' },
-    { text: 'Barcha platformalar uchun optimallangan', icon: '📱' },
+    'Dizaynga 8.9+ yillik tajriba',
+    'Tez va ishonchli xizmat',
+    '100% reviziyada tayyor',
+    'Zamonaviy dizayn stillar',
+    'Professional va yaratuvchi',
+    'Barcha platformalar uchun optimallangan',
   ]
 
   const timeline = [
