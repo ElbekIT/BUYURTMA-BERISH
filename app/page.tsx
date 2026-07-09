@@ -275,7 +275,7 @@ export default function Page() {
                 </p>
                 <div className="flex gap-4">
                   <Button className="px-6">
-                    <a href="https://t.me/yourbot" target="_blank" rel="noopener noreferrer">
+                    <a href="https://t.me/elbekdesign_va_webdasturchi" target="_blank" rel="noopener noreferrer">
                       Telegram
                     </a>
                   </Button>
@@ -307,7 +307,7 @@ export default function Page() {
               Sizda savollar bormi yoki maslahat kerekmi? Quyidagi kanallari orqali men bilan bog\'laning
             </p>
             <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              <a href="https://t.me/yourbot" target="_blank" rel="noopener noreferrer">
+              <a href="https://t.me/elbekdesign_va_webdasturchi" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90">
                   Telegram
                 </Button>
