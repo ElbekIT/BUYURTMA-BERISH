@@ -1,260 +1,149 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { doc, getDoc, collection, query, where, getDocs, User as FirebaseUser } from 'firebase/firestore';
-import { db, auth } from '@/lib/firebase';
-import { Navigation } from '@/components/navigation';
-import { Button } from '@/components/ui/button';
-import { Portfolio, User as UserType, Service } from '@/lib/types';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowLeft, MessageCircle, Star } from 'lucide-react';
-import { useRouter, useParams } from 'next/navigation';
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
+import { getPortfolioItem } from '@/lib/firestore'
+import { PortfolioItem } from '@/lib/types'
+import { Navigation } from '@/components/Navigation'
+import { Button } from '@/components/Button'
 
 export default function PortfolioDetailPage() {
-  const router = useRouter();
-  const params = useParams();
-  const portfolioId = params?.id as string;
-
-  const [portfolio, setPortfolio] = useState<(Portfolio & { ownerName: string; ownerEmail: string; ownerId: string }) | null>(null);
-  const [owner, setOwner] = useState<UserType | null>(null);
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const params = useParams()
+  const [item, setItem] = useState<PortfolioItem | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-    });
-    return unsubscribe;
-  }, []);
+    loadItem()
+  }, [params.id])
 
-  useEffect(() => {
-    if (!portfolioId) return;
-
-    const fetchPortfolio = async () => {
-      try {
-        const portfolioRef = doc(db, 'portfolios', portfolioId);
-        const portfolioSnap = await getDoc(portfolioRef);
-
-        if (portfolioSnap.exists()) {
-          const portfolioData = portfolioSnap.data() as Portfolio;
-          const ownerId = portfolioData.userId;
-
-          setPortfolio({
-            ...portfolioData,
-            ownerId,
-            ownerName: portfolioData.ownerName || 'Designer',
-            ownerEmail: portfolioData.ownerEmail || '',
-          });
-
-          // Fetch owner info
-          const userRef = doc(db, 'users', ownerId);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
-            setOwner(userSnap.data() as UserType);
-          }
-
-          // Fetch services
-          const servicesRef = collection(db, 'services');
-          const q = query(servicesRef, where('userId', '==', ownerId));
-          const servicesSnap = await getDocs(q);
-          const servicesList: Service[] = [];
-          servicesSnap.forEach((doc) => {
-            servicesList.push({ ...doc.data(), id: doc.id } as Service);
-          });
-          setServices(servicesList);
+  const loadItem = async () => {
+    try {
+      if (typeof params.id === 'string') {
+        const data = await getPortfolioItem(params.id)
+        if (data) {
+          setItem(data)
+        } else {
+          setError('Portfolio item not found')
         }
-      } catch (error) {
-        console.error('Error fetching portfolio:', error);
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchPortfolio();
-  }, [portfolioId]);
+    } catch (err) {
+      setError('Failed to load portfolio item')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <>
         <Navigation />
-        <main className="max-w-6xl mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-muted rounded w-32" />
-            <div className="h-96 bg-muted rounded" />
-            <div className="space-y-4">
-              <div className="h-6 bg-muted rounded w-1/3" />
-              <div className="h-4 bg-muted rounded w-2/3" />
-            </div>
-          </div>
+        <main className="min-h-screen bg-background flex items-center justify-center">
+          <p className="text-muted-foreground">Loading...</p>
         </main>
-      </div>
-    );
+      </>
+    )
   }
 
-  if (!portfolio) {
+  if (error || !item) {
     return (
-      <div className="min-h-screen bg-background">
+      <>
         <Navigation />
-        <main className="max-w-6xl mx-auto px-4 py-8">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </button>
-          <div className="text-center py-12">
-            <p className="text-lg text-muted-foreground">Portfolio not found</p>
+        <main className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">{error || 'Item not found'}</p>
+            <Link href="/portfolio">
+              <Button>Back to Portfolio</Button>
+            </Link>
           </div>
         </main>
-      </div>
-    );
+      </>
+    )
   }
-
-  const canContact = currentUser && currentUser.uid !== portfolio.ownerId;
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Navigation />
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </button>
+      <main className="bg-background">
+        {/* Back Button */}
+        <div className="border-b border-border">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <Link href="/portfolio" className="text-primary hover:text-primary/80">
+              &larr; Back to Portfolio
+            </Link>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Portfolio Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Images */}
-            {portfolio.images && portfolio.images.length > 0 && (
-              <div className="space-y-4">
-                <div className="relative h-96 md:h-[500px] w-full overflow-hidden rounded-lg bg-muted border border-border">
-                  <Image
-                    src={portfolio.images[0]}
-                    alt={portfolio.title}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-                {portfolio.images.length > 1 && (
-                  <div className="grid grid-cols-4 gap-2">
-                    {portfolio.images.slice(1, 5).map((img, idx) => (
-                      <div
-                        key={idx}
-                        className="relative h-24 w-full overflow-hidden rounded bg-muted border border-border cursor-pointer hover:border-accent transition-colors"
-                      >
-                        <Image
-                          src={img}
-                          alt={`${portfolio.title} ${idx + 2}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+        {/* Content */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Image */}
+          {item.imageUrl && (
+            <div className="mb-12 rounded-lg overflow-hidden bg-secondary">
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                className="w-full h-auto max-h-96 object-cover"
+              />
+            </div>
+          )}
 
-            {/* Portfolio Details */}
-            <div className="space-y-4">
-              <div>
-                <h1 className="text-4xl font-bold mb-2 text-balance">{portfolio.title}</h1>
-                <p className="text-lg text-muted-foreground">{portfolio.description}</p>
-              </div>
-
-              {portfolio.details && (
-                <div className="prose prose-invert max-w-none bg-card p-6 rounded-lg border border-border">
-                  <p className="whitespace-pre-wrap">{portfolio.details}</p>
-                </div>
-              )}
+          {/* Details */}
+          <div className="mb-12">
+            <div className="mb-4 flex gap-2 flex-wrap">
+              <span className="text-xs font-semibold text-primary uppercase bg-primary/10 px-3 py-1 rounded-full">
+                {item.platform}
+              </span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase bg-secondary px-3 py-1 rounded-full">
+                {item.designType}
+              </span>
             </div>
 
-            {/* Services */}
-            {services.length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold">Available Services</h2>
-                <div className="grid grid-cols-1 gap-4">
-                  {services.map((service) => (
-                    <div
-                      key={service.id}
-                      className="bg-card border border-border rounded-lg p-4 hover:border-accent transition-colors"
+            <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
+              {item.title}
+            </h1>
+
+            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+              {item.description}
+            </p>
+
+            {item.tags && item.tags.length > 0 && (
+              <div className="mb-8">
+                <p className="text-sm font-semibold text-foreground mb-3">Tags</p>
+                <div className="flex gap-2 flex-wrap">
+                  {item.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-sm bg-secondary text-muted-foreground px-3 py-1 rounded-lg"
                     >
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-lg font-semibold">{service.name}</h3>
-                        <span className="text-lg font-bold text-accent">
-                          ${service.price}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{service.description}</p>
-                    </div>
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            {/* Owner Card */}
-            <div className="bg-card border border-border rounded-lg p-6 sticky top-24 space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold">{portfolio.ownerName}</h3>
-                    <p className="text-sm text-muted-foreground">{owner?.role || 'Creative Professional'}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 py-2 border-y border-border">
-                  <Star className="w-5 h-5 fill-accent text-accent" />
-                  <span className="font-semibold">{portfolio.rating || 0} rating</span>
-                </div>
-
-                {owner?.bio && (
-                  <p className="text-sm text-muted-foreground">{owner.bio}</p>
-                )}
-              </div>
-
-              <div className="space-y-3 pt-4 border-t border-border">
-                {canContact ? (
-                  <>
-                    <Link href={`/messages?userId=${portfolio.ownerId}`} className="block">
-                      <Button className="w-full gap-2">
-                        <MessageCircle className="w-4 h-4" />
-                        Contact Designer
-                      </Button>
-                    </Link>
-                    <Link
-                      href={`/order?portfolioId=${portfolio.id}&ownerId=${portfolio.ownerId}`}
-                      className="block"
-                    >
-                      <Button variant="outline" className="w-full">
-                        Place Order
-                      </Button>
-                    </Link>
-                  </>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground mb-4">Sign in to contact this designer</p>
-                    <Link href="/login" className="block">
-                      <Button variant="outline" className="w-full">
-                        Sign In
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
+            <div className="pt-8 border-t border-border">
+              <Link href="/order">
+                <Button size="lg">Order Similar Design</Button>
+              </Link>
             </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="border-t border-border px-4 sm:px-6 lg:px-8 py-12 bg-secondary/20">
+          <div className="max-w-4xl mx-auto text-center text-muted-foreground text-sm">
+            <p>Interested in custom design work?</p>
+            <Link href="/order">
+              <Button size="sm" className="mt-4">
+                Place an Order
+              </Button>
+            </Link>
+          </div>
+        </footer>
       </main>
-    </div>
-  );
+    </>
+  )
 }
