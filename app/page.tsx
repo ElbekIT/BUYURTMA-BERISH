@@ -312,7 +312,7 @@ export default function Page() {
                   Telegram
                 </Button>
               </a>
-              <a href="tel:+998XXXXXXXXX">
+              <a href="tel:+998904063090">
                 <Button size="lg" variant="secondary" className="w-full">
                   Qo\'ng\'iroq Qilish
                 </Button>
