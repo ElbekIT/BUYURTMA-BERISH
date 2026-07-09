@@ -280,7 +280,7 @@ export default function Page() {
                     </a>
                   </Button>
                   <Button variant="secondary">
-                    +998 XX XXX XX XX
+                    +998 90 406 30 90
                   </Button>
                 </div>
               </div>
