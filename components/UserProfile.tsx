@@ -60,6 +60,6 @@ export function UserProfile() {
           </button>
         </div>
       )}
-    </div>
+   </div>
   )
 }

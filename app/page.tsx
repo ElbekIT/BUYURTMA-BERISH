@@ -314,7 +314,7 @@ export default function Page() {
               </a>
               <a href="tel:+998904063090">
                 <Button size="lg" variant="secondary" className="w-full">
-                  Qo\'ng\'iroq Qilish
+                  Qo'ng'iroq Qilish
                 </Button>
               </a>
             </div>
