@@ -1,14 +1,10 @@
 import { Analytics } from '@vercel/analytics/next'
-import { Inter } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
-import { AuthProvider } from '@/context/AuthContext'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin', 'cyrillic'] })
-
 export const metadata: Metadata = {
-  title: 'Dizayn Buyurtmasi - Professional Design Services',
-  description: 'YouTube, Telegram, Instagram, TikTok, PUBG uchun professional dizayn xizmatları',
+  title: 'Keen - Portfolio & Orders',
+  description: 'Browse design portfolios and place orders with creative professionals',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -27,19 +23,14 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
-  openGraph: {
-    title: 'Dizayn Buyurtmasi',
-    description: 'Professional design services for your social media',
-    type: 'website',
-  },
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#ffffff',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f8f7f2' },
+    { media: '(prefers-color-scheme: dark)', color: '#1e1e2e' },
+  ],
 }
 
 export default function RootLayout({
@@ -48,9 +39,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background scroll-smooth">
-      <body className={`${inter.className} antialiased text-foreground`}>
-        <AuthProvider>{children}</AuthProvider>
+    <html lang="en" className="bg-background">
+      <body className="antialiased bg-background text-foreground">
+        {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

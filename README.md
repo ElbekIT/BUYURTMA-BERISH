@@ -1,290 +1,328 @@
-# Dizayn Buyurtmasi - Design Order Platform
+# Keen - Portfolio & Orders Platform
 
-Professional design order platform for YouTube, Telegram, Instagram, TikTok, and PUBG. Built with Next.js 16, React Hook Form, Zod, and Telegram Bot API integration.
+A modern platform for creative professionals to showcase their portfolios and receive orders from clients. Built with Next.js 16, Firebase, and Tailwind CSS.
 
 ## Features
 
-- **Firebase Google Sign-In**: Secure authentication with Google accounts
-- **Protected Routes**: Order pages require authentication
-- **5 Platform Support**: YouTube, Telegram, Instagram, TikTok, PUBG
-- **Platform-Specific Forms**: Each platform has tailored fields and validation
-- **Real-time Validation**: Zod schemas for bulletproof form validation
-- **Telegram Integration**: Automatic order delivery with user info
-- **User Profile**: Display logged-in user info in navigation
-- **Responsive Design**: Mobile-first, works on all devices
-- **Professional UI**: Clean, minimal, Stripe-like aesthetic
-- **Error Handling**: Comprehensive error messages and modals
+### For Clients
+- **Browse Portfolios**: Discover talented designers and creative professionals
+- **View Portfolio Details**: See project images, descriptions, and available services
+- **Place Orders**: Create custom orders with flexible service selection and descriptions
+- **Track Orders**: Monitor order status in real-time (pending, accepted, in progress, completed)
+- **Real-time Messaging**: Chat directly with service providers
+- **Notifications**: Receive instant updates about order status changes
+
+### For Service Providers
+- **Manage Portfolios**: Create, edit, and publish portfolio pieces
+- **Upload Images**: Add up to 5 images per portfolio piece to Firebase Cloud Storage
+- **Define Services**: Set up predefined services with pricing
+- **Dashboard**: View statistics about orders and portfolios
+- **Order Management**: Accept, decline, or update the status of incoming orders
+- **Client Communication**: Message clients in real-time
+- **Notifications**: Get alerted when new orders arrive
+
+### Core Features
+- **Real-time Database**: Firestore for instant data synchronization
+- **Image Storage**: Firebase Cloud Storage for portfolio images
+- **Authentication**: Firebase Authentication with email/password
+- **Responsive Design**: Mobile-first design that works on all devices
+- **Dark Mode**: Built-in light/dark mode support
+- **Real-time Notifications**: Instant alerts for orders and messages
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Authentication**: Firebase Auth (Google Sign-In)
-- **Forms**: React Hook Form + Zod validation
-- **Styling**: Tailwind CSS 4.2
-- **Components**: Custom reusable components
-- **API**: Next.js API Routes
-- **Notifications**: Telegram Bot API
-- **Animations**: Framer Motion
-- **Deployment**: Vercel ready
+- **Frontend**: Next.js 16 (App Router)
+- **Backend**: Firebase (Firestore, Authentication, Cloud Storage)
+- **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui
+- **Icons**: lucide-react
+- **Database**: Firestore with real-time listeners
 
 ## Getting Started
 
 ### Prerequisites
+- Node.js 18+ and pnpm
+- Firebase project with:
+  - Authentication enabled
+  - Firestore database
+  - Cloud Storage
 
-- Node.js 18+
-- pnpm (or npm/yarn)
-- Firebase Project (Google Cloud)
-- Telegram Bot Token
-- Telegram Chat ID
+### Environment Variables
+
+Add these environment variables to your `.env.local`:
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
 
 ### Installation
 
-1. Clone and install dependencies:
+1. Install dependencies:
 ```bash
 pnpm install
 ```
 
-2. Set up Firebase (see [Firebase Setup Guide](./FIREBASE_SETUP.md)):
-   - Create Firebase project
-   - Enable Google Sign-In
-   - Copy Firebase configuration
-
-3. Set up environment variables:
-```bash
-cp .env.example .env.local
-```
-
-4. Configure your `.env.local`:
-```
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
-
-# Telegram Bot Configuration
-BOT_TOKEN=your_bot_token_from_botfather
-CHAT_ID=your_telegram_chat_id
-```
-
-### Get Telegram Credentials
-
-1. **Bot Token**:
-   - Open Telegram and find [@BotFather](https://t.me/botfather)
-   - Send `/newbot` and follow instructions
-   - Copy your bot token
-
-2. **Chat ID**:
-   - Send `/start` to your new bot
-   - Open this in your browser (replace BOT_TOKEN):
-     ```
-     https://api.telegram.org/botBOT_TOKEN/getUpdates
-     ```
-   - Find the `chat_id` in the JSON response
-   - Copy it to `CHAT_ID`
-
-### Development
-
+2. Run the development server:
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-### Production Build
+## Firebase Setup
 
-```bash
-pnpm build
-pnpm start
+### Firestore Collections
+
+The app uses the following Firestore collections:
+
+#### Users
+```typescript
+{
+  id: string (uid)
+  email: string
+  name: string
+  role: 'client' | 'provider'
+  bio: string (optional)
+  createdAt: timestamp
+}
+```
+
+#### Portfolios
+```typescript
+{
+  id: string (auto)
+  userId: string
+  ownerName: string
+  ownerEmail: string
+  title: string
+  description: string
+  details: string (optional)
+  images: string[] (URLs to Cloud Storage)
+  rating: number
+  published: boolean
+  createdAt: timestamp
+  updatedAt: timestamp
+}
+```
+
+#### Orders
+```typescript
+{
+  id: string (auto)
+  clientId: string
+  clientEmail: string
+  ownerId: string
+  serviceId: string (optional)
+  customDescription: string
+  budget: number (optional)
+  deadline: timestamp
+  status: 'pending' | 'accepted' | 'in_progress' | 'completed' | 'cancelled'
+  createdAt: timestamp
+  updatedAt: timestamp
+}
+```
+
+#### Services
+```typescript
+{
+  id: string (auto)
+  userId: string
+  name: string
+  description: string
+  price: number
+  createdAt: timestamp
+}
+```
+
+#### Messages
+```typescript
+{
+  id: string (auto)
+  senderId: string
+  senderEmail: string
+  recipientId: string
+  recipientEmail: string
+  text: string
+  participants: string[]
+  createdAt: timestamp
+}
+```
+
+#### Notifications
+```typescript
+{
+  id: string (auto)
+  userId: string
+  type: string
+  message: string
+  read: boolean
+  createdAt: timestamp
+}
+```
+
+### Firebase Security Rules
+
+#### Firestore Security Rules
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users - can read own, write own
+    match /users/{userId} {
+      allow read: if request.auth.uid == userId;
+      allow create: if request.auth.uid == request.resource.data.id;
+      allow update: if request.auth.uid == userId;
+    }
+
+    // Portfolios - public read for published, owner can edit
+    match /portfolios/{document=**} {
+      allow read: if resource.data.published == true;
+      allow read: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid != null;
+      allow update, delete: if request.auth.uid == resource.data.userId;
+    }
+
+    // Orders - owner and client can read/write
+    match /orders/{document=**} {
+      allow read: if request.auth.uid == resource.data.clientId || request.auth.uid == resource.data.ownerId;
+      allow create: if request.auth.uid == request.resource.data.clientId;
+      allow update: if request.auth.uid == resource.data.clientId || request.auth.uid == resource.data.ownerId;
+    }
+
+    // Services - public read, owner can edit
+    match /services/{document=**} {
+      allow read;
+      allow create: if request.auth.uid != null;
+      allow update, delete: if request.auth.uid == resource.data.userId;
+    }
+
+    // Messages - participants can read/write
+    match /messages/{document=**} {
+      allow read: if request.auth.uid in resource.data.participants;
+      allow create: if request.auth.uid == request.resource.data.senderId;
+    }
+
+    // Notifications - user can read own
+    match /notifications/{document=**} {
+      allow read, update: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null;
+    }
+  }
+}
+```
+
+#### Cloud Storage Rules
+```
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow authenticated users to upload to their own portfolio folder
+    match /portfolios/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth.uid == userId && request.resource.size < 10485760;
+    }
+  }
+}
 ```
 
 ## Project Structure
 
 ```
-/app
-  ├── layout.tsx              # Root layout
-  ├── page.tsx                # Home page
-  ├── globals.css             # Global styles & design tokens
-  ├── order/
-  │   ├── layout.tsx          # Order layout
-  │   ├── page.tsx            # Platform selection page
-  │   └── [platform]/
-  │       └── page.tsx        # Form for each platform
-  └── api/
-      └── telegram/
-          └── route.ts        # Telegram API endpoint
-
-/components
-  ├── Navigation.tsx          # Header navigation
-  ├── Button.tsx              # Button component
-  ├── Card.tsx                # Card components
-  ├── FormField.tsx           # Form input fields
-  └── Modal.tsx               # Success/error modals
-
-/lib
-  ├── types.ts                # TypeScript types
-  ├── schemas.ts              # Zod validation schemas
-  ├── telegram.ts             # Telegram bot utilities
-  └── utils.ts                # Utility functions
-
-/hooks
-  └── useFormSubmit.ts        # Form submission hook
+├── app/
+│   ├── layout.tsx           # Root layout
+│   ├── page.tsx             # Landing page
+│   ├── login/               # Login page
+│   ├── signup/              # Signup page
+│   ├── explore/             # Browse portfolios
+│   ├── portfolio/
+│   │   ├── [id]/            # Portfolio detail
+│   │   ├── [id]/edit/       # Edit portfolio
+│   │   └── create/          # Create new portfolio
+│   ├── order/
+│   │   ├── page.tsx         # Create order
+│   │   └── [id]/            # Order detail
+│   ├── my-orders/           # Client's orders
+│   ├── orders-received/     # Provider's received orders
+│   ├── messages/            # Real-time messaging
+│   └── dashboard/           # Provider dashboard
+├── components/
+│   ├── navigation.tsx       # Navigation bar
+│   ├── notifications.tsx    # Notifications dropdown
+│   └── ui/                  # shadcn UI components
+├── lib/
+│   ├── firebase.ts          # Firebase configuration
+│   ├── types.ts             # TypeScript types
+│   └── auth-context.tsx     # Auth context provider
+└── public/                  # Static assets
 ```
 
-## Platforms & Features
+## Key Pages
 
-### YouTube
-- Design types: Thumbnail, Channel Art, Video Intro, End Screen, Subscribe Button, Playlist Cover, Stream Overlay
-- Game selector: 40+ popular games
-- Optional: Preview name, channel link
+### Client User Flow
+1. **Landing Page** (`/`) - Introduction and CTAs
+2. **Explore** (`/explore`) - Browse all published portfolios
+3. **Portfolio Detail** (`/portfolio/[id]`) - View full portfolio and services
+4. **Create Order** (`/order?portfolioId=...`) - Place an order
+5. **My Orders** (`/my-orders`) - Track personal orders
+6. **Messages** (`/messages`) - Chat with service providers
 
-### Telegram
-- Design types: Logo, Banner, Avatar, Sticker
-- Channel/group support
-- Profile link optional
+### Provider User Flow
+1. **Dashboard** (`/dashboard`) - Overview of portfolios and orders
+2. **Create Portfolio** (`/portfolio/create`) - Add new portfolio
+3. **Edit Portfolio** (`/portfolio/[id]/edit`) - Update existing portfolio
+4. **Orders Received** (`/orders-received`) - Manage incoming orders
+5. **Messages** (`/messages`) - Chat with clients
 
-### Instagram
-- Design types: Profile Picture, Post Template, Stories Template, Feed Layout, Highlight Cover, Bio Section
-- Username required
-- Profile link optional
+## Real-time Features
 
-### TikTok
-- Design types: Profile Picture, Cover Video, Watermark, Effect Design, Transition Template
-- Username required
-- Profile link optional
+### Firebase Listeners
+- **Portfolio updates**: Real-time changes to portfolio data
+- **Order status**: Instant updates when order status changes
+- **Messages**: Real-time message delivery
+- **Notifications**: Instant notifications for new orders and status changes
 
-### PUBG
-- Design types: Clan Logo, Team Banner, Profile Picture, Stream Overlay
-- Nickname and PUBG ID required
-- Esports support
+### Auto-cleanup
+All Firestore listeners are properly cleaned up when components unmount to prevent memory leaks.
 
-## Form Submission Flow
+## Development
 
-1. User fills platform-specific form
-2. Client-side Zod validation
-3. Form data sent to `/api/telegram`
-4. Server validates and formats message
-5. File uploaded (if present)
-6. Message sent to Telegram via bot API
-7. Success modal shown to user
-8. Form resets
-
-## Telegram Message Format
-
-```
-📥 NEW ORDER
-
-Platform: [platform name]
-Name: [full name]
-Phone: [phone]
-Telegram: [@username]
-Platform Name: [channel/profile name]
-Profile Link: [url]
-Design Type: [type]
-Game: [if applicable]
-Preview Name: [if applicable]
-Additional Notes: [notes]
-Date: [date]
-Time: [time]
-
-[File attachment if present]
+### Run tests
+```bash
+pnpm test
 ```
 
-## Validation Rules
-
-- **Full Name**: 2-100 characters
-- **Phone**: Optional, must be valid format if provided
-- **Telegram Username**: Required, must be valid
-- **Platform Name**: 1-100 characters
-- **Design Type**: Required, platform-specific
-- **File**: Optional, max 20MB, accepted formats: JPG, PNG, WebP, PDF, ZIP, RAR
-- **Additional Notes**: Max 1000 characters
-
-## Design System
-
-### Colors
-- **Primary**: #2563eb (Blue)
-- **Background**: #ffffff (White)
-- **Foreground**: #111827 (Dark Gray)
-- **Border**: #e5e7eb (Light Gray)
-- **Muted**: #6b7280 (Gray)
-
-### Typography
-- **Font**: Inter (system default)
-- **Headings**: Bold weights
-- **Body**: Regular weight, 16px line-height
-
-### Spacing
-- Uses Tailwind spacing scale
-- Base unit: 4px (0.25rem)
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push code to GitHub
-2. Connect to Vercel
-3. Set environment variables in project settings
-4. Deploy automatically on push
-
-### Manual Deployment
-
+### Build for production
 ```bash
 pnpm build
-pnpm start
 ```
 
-## Error Handling
+### Deploy to Vercel
+```bash
+vercel deploy
+```
 
-- **Validation Errors**: Client-side, shown inline in form
-- **Submission Errors**: Modal with error message and retry option
-- **Telegram API Errors**: Caught and displayed to user
-- **File Upload Errors**: Size and format validation
+## Deployment Considerations
 
-## Performance
-
-- Next.js automatic code splitting
-- Image optimization
-- CSS-in-JS with Tailwind
-- Optimized for 95+ Lighthouse score
-- Mobile-first responsive design
-
-## Accessibility
-
-- Semantic HTML
-- ARIA labels for form fields
-- Keyboard navigation support
-- High contrast colors
-- Readable font sizes
+1. **Environment Variables**: Set Firebase credentials in Vercel project settings
+2. **CORS**: Ensure Firebase Cloud Storage CORS is properly configured for your domain
+3. **Security**: Review Firebase security rules before deploying
+4. **Rate Limiting**: Consider adding rate limiting for API calls
 
 ## Future Enhancements
 
+- Payment processing (Stripe integration)
+- Review and rating system
+- Advanced search and filtering
+- Portfolio analytics
+- Order timeline with milestones
+- File attachment support
 - Email notifications
-- Order history/dashboard
-- Payment integration
-- Multi-language support
-- Automated responses
-- Admin panel for order management
-
-## Troubleshooting
-
-### Telegram API Errors
-- Verify BOT_TOKEN is correct
-- Verify CHAT_ID is correct format (integer)
-- Check bot has permission to send messages to chat
-
-### Form Validation
-- Check Zod schemas for field requirements
-- Ensure file size < 20MB
-- Verify file format is accepted
-
-### Build Errors
-- Clear `.next` folder: `rm -rf .next`
-- Reinstall dependencies: `pnpm install`
-- Rebuild: `pnpm build`
+- Admin dashboard
 
 ## License
 
@@ -292,4 +330,4 @@ MIT
 
 ## Support
 
-For issues or questions, contact via Telegram.
+For issues or questions, please open an issue in the repository.
