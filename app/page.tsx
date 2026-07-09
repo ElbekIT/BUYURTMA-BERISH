@@ -196,7 +196,7 @@ export default function Page() {
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {advantages.map((advantage, idx) => (
-                <Card key={idx}>
+                <Card key={idx} className="h-full transition-shadow duration-300 cursor-pointer hover:shadow-[0_0_18px_rgba(255,0,0,0.75)] hover:shadow-[0_0_22px_rgba(0,255,0,0.6)] hover:shadow-[0_0_26px_rgba(0,0,255,0.5)]">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                       <span className="text-primary-foreground font-bold text-lg">✓</span>
