@@ -345,15 +345,29 @@ export default function Page() {
         {/* Footer */}
         <footer className="border-t border-border px-4 sm:px-6 lg:px-8 py-12 bg-secondary/20">
           <div className="max-w-6xl mx-auto text-center text-muted-foreground text-sm">
-            <p>&copy; 2024 Dizayn Xizmatlarimiz. Barcha huquqlar himoyalangan.</p>
+            <p>&copy; 2026 Dizayn Xizmatlarimiz. Barcha huquqlar himoyalangan.</p>
             <div className="flex justify-center gap-6 mt-6">
-              <a href="https://t.me/yourbot" className="hover:text-primary transition-colors">
+              <a href="https://t.me/elbekdesign_va_webdasturchi" className="hover:text-primary transition-colors">
                 Telegram
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  alert('HALI OCHILMAGAN')
+                }}
+                className="hover:text-primary transition-colors"
+              >
                 Instagram
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  alert('HALI OCHILMAGAN')
+                }}
+                className="hover:text-primary transition-colors"
+              >
                 YouTube
               </a>
             </div>
